@@ -1,23 +1,28 @@
 #include <initializer_list>
+#include <iostream>
 #include <stdexcept>
+#include <sstream>
+
+#include "UnsortedList.hh"
 
 using std::out_of_range;
 using std::initializer_list;
+using std::stringstream;
 
 UnsortedList::UnsortedList(int sz) {
 	cur_size = 0;
 	max_size = sz;
 
 	// initalizes a new integer array of sz
-	arr = new int[sz]; // can throw
+	arr = new int[sz];
 }
 
 UnsortedList::UnsortedList(initializer_list<int> ls) {
-	cur_size = 0;
+	cur_size = ls.size();
 	max_size = ls.size();
 
 	// initalizes a new integer array from an initializer list
-	arr = new int[ls.size()]; // can throw
+	arr = new int[ls.size()];
 
 	int i = 0;
 	for (int x : ls) {
@@ -32,7 +37,9 @@ UnsortedList::~UnsortedList() {
 
 void UnsortedList::putElement(int element) {
 	if (cur_size == max_size) {
-		throw out_of_range;
+		stringstream sstr;
+		sstr << "Can't put " << element << " in list! for UnsortedList::putElement";
+		throw out_of_range(sstr.str());
 	}
 
 	arr[cur_size] = element;
@@ -42,7 +49,9 @@ void UnsortedList::putElement(int element) {
 int UnsortedList::getElement(int pos) const {
 	// if the position requested is outside of the acceptable range
 	if (pos < 0 || pos >= cur_size) {
-		throw out_of_range;
+		stringstream sstr;
+		sstr << "Position " << pos << " is out of range for UnsortedList::getElement";
+		throw out_of_range(sstr.str());
 	}
 
 	return arr[pos];
@@ -55,11 +64,13 @@ bool UnsortedList::isFull() const {
 void UnsortedList::delElement(int pos) {
 	// if the position requested is outside of the acceptable range
 	if (pos < 0 || pos >= cur_size) {
-		throw out_of_range;
+		stringstream sstr;
+		sstr << "Position " << pos << " is out of range for UnsortedList::delElement";
+		throw out_of_range(sstr.str());
 	}
 
 	// uses the swapping method
-	arr[pos] = arr[cur_size]-1;
+	arr[pos] = arr[cur_size-1];
 	cur_size--;
 }
 
@@ -80,4 +91,21 @@ void UnsortedList::resize(int sz) {
 
 	// copy the pointer over
 	arr = arr2;
+}
+
+/*
+ * Prints out the contents of the UnsortedList, separated by commas
+ * and terminated by a new line.
+ */
+void UnsortedList::printList() const {
+	using std::cout;
+	using std::endl;
+
+	if (cur_size > 0) {
+		cout << arr[0];
+	}
+	for (int i = 1; i < cur_size; ++i) {
+		cout << ", " << arr[i];
+	}
+	cout << endl;
 }
